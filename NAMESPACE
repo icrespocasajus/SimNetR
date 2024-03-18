@@ -2,7 +2,6 @@
 
 export(find.knn)
 export(network.dynamics.ODE)
-export(network.dynamics.ODE.2)
 export(perturbNodes)
 export(plotPerturbation)
 export(range01)

@@ -13,7 +13,8 @@ network.dynamics.ODE(
   time.limit = 30,
   time.step.size = 0.01,
   weights,
-  perturbations = NULL
+  perturbations = NULL,
+  special_node_functions = list()
 )
 }
 \arguments{
@@ -34,6 +35,8 @@ network.dynamics.ODE(
 \item{weights}{PARAM_DESCRIPTION}
 
 \item{perturbations}{PARAM_DESCRIPTION, Default: NULL}
+
+\item{special_node_functions}{PARAM_DESCRIPTION, Default: list()}
 }
 \value{
 OUTPUT_DESCRIPTION

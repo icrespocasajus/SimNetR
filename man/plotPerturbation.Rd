@@ -4,16 +4,14 @@
 \alias{plotPerturbation}
 \title{FUNCTION_TITLE}
 \usage{
-plotPerturbation(data, title, xlabel, ylabel)
+plotPerturbation(dat, col = NULL, title = "Node activity in time")
 }
 \arguments{
-\item{data}{PARAM_DESCRIPTION}
+\item{dat}{PARAM_DESCRIPTION}
 
-\item{title}{PARAM_DESCRIPTION}
+\item{col}{PARAM_DESCRIPTION, Default: NULL}
 
-\item{xlabel}{PARAM_DESCRIPTION}
-
-\item{ylabel}{PARAM_DESCRIPTION}
+\item{title}{PARAM_DESCRIPTION, Default: 'Node activity in time'}
 }
 \value{
 OUTPUT_DESCRIPTION

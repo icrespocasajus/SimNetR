@@ -72,31 +72,6 @@ range01 <- function(x) {
 
 #' @title FUNCTION_TITLE
 #' @description FUNCTION_DESCRIPTION
-#' @param embeddings PARAM_DESCRIPTION
-#' @param query PARAM_DESCRIPTION
-#' @param k PARAM_DESCRIPTION
-#' @return OUTPUT_DESCRIPTION
-#' @details DETAILS
-#' @examples 
-#' \dontrun{
-#' if(interactive()){
-#'  #EXAMPLE1
-#'  }
-#' }
-#' @rdname find.knn
-#' @export 
-find.knn <- function(embeddings, query, k) {
-  library(distances)
-  distances.input <- rbind(query, embeddings)
-  dist <- distances(distances.input)
-  knn <- nearest_neighbor_search(distances = dist, k = k + 1, query_indices = c(1:nrow(query)))
-  colnames(knn) <- rownames(query)
-  knn.w.labels <- apply(knn, 2, function(x) { rownames(distances.input)[x] })
-  return(knn.w.labels[-c(1), , drop = FALSE])
-}
-
-#' @title FUNCTION_TITLE
-#' @description FUNCTION_DESCRIPTION
 #' @param nodes PARAM_DESCRIPTION
 #' @param at.times PARAM_DESCRIPTION
 #' @param duration PARAM_DESCRIPTION
@@ -129,10 +104,9 @@ perturbNodes <- function(nodes, at.times, duration, intensity, time.step.size, t
 
 #' @title FUNCTION_TITLE
 #' @description FUNCTION_DESCRIPTION
-#' @param data PARAM_DESCRIPTION
-#' @param title PARAM_DESCRIPTION
-#' @param xlabel PARAM_DESCRIPTION
-#' @param ylabel PARAM_DESCRIPTION
+#' @param dat PARAM_DESCRIPTION
+#' @param col PARAM_DESCRIPTION, Default: NULL
+#' @param title PARAM_DESCRIPTION, Default: 'Node activity in time'
 #' @return OUTPUT_DESCRIPTION
 #' @details DETAILS
 #' @examples 
@@ -143,14 +117,17 @@ perturbNodes <- function(nodes, at.times, duration, intensity, time.step.size, t
 #' }
 #' @rdname plotPerturbation
 #' @export 
-plotPerturbation <- function(data, title, xlabel, ylabel) {
-  data <- melt(as.data.frame(data), id.vars = "time")
-  p <- ggplot(data = data, aes(x = time, y = value, colour = variable))
-  p <- p + geom_point(size = 1.0, alpha = 0) + geom_path(linewidth = 1.5, alpha = 1.0)
-  p <- p + theme_tufte()
-  p <- p + scale_y_continuous(limits = c(0, 1.0)) + scale_x_continuous(limits = c(0, 30))
-  p <- p + labs(list(title = title, x = xlabel, y = ylabel, colour = ""))
-  return(p)
+plotPerturbation <- function(dat,col = NULL,title='Node activity in time'){
+  network.dynamics.tmp = melt(as.data.frame(dat), id.vars="time")
+  if(is.null(col)){
+    plot = ggplot(data = network.dynamics.tmp, aes(x = time, y = value,color=variable)) + geom_point()
+    plot = plot+labs(colour="Nodes", y="Activation level", title=title)
+  }
+  if(!is.null(col)){
+    plot = ggplot(data = network.dynamics.tmp, aes(x = time, y = value,color=variable)) + geom_point() + scale_color_manual(values = col)
+    plot = plot+labs(colour="Nodes", y="Activation level", title=title)
+  }
+  return(plot)
 }
 
 #' @title FUNCTION_TITLE

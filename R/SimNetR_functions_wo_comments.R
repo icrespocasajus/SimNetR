@@ -29,16 +29,6 @@ range01 <- function(x) {
 }
 
 
-find.knn <- function(embeddings, query, k) {
-  library(distances)
-  distances.input <- rbind(query, embeddings)
-  dist <- distances(distances.input)
-  knn <- nearest_neighbor_search(distances = dist, k = k + 1, query_indices = c(1:nrow(query)))
-  colnames(knn) <- rownames(query)
-  knn.w.labels <- apply(knn, 2, function(x) { rownames(distances.input)[x] })
-  return(knn.w.labels[-c(1), , drop = FALSE])
-}
-
 perturbNodes <- function(nodes, at.times, duration, intensity, time.step.size, times) {
   pulses <- vars <- values <- NULL
   for (i in 1:length(nodes)) {
@@ -53,14 +43,17 @@ perturbNodes <- function(nodes, at.times, duration, intensity, time.step.size, t
 }
 
 
-plotPerturbation <- function(data, title, xlabel, ylabel) {
-  data <- melt(as.data.frame(data), id.vars = "time")
-  p <- ggplot(data = data, aes(x = time, y = value, colour = variable))
-  p <- p + geom_point(size = 1.0, alpha = 0) + geom_path(linewidth = 1.5, alpha = 1.0)
-  p <- p + theme_tufte()
-  p <- p + scale_y_continuous(limits = c(0, 1.0)) + scale_x_continuous(limits = c(0, 30))
-  p <- p + labs(list(title = title, x = xlabel, y = ylabel, colour = ""))
-  return(p)
+plotPerturbation <- function(dat,col = NULL,title='Node activity in time'){
+  network.dynamics.tmp = melt(as.data.frame(dat), id.vars="time")
+  if(is.null(col)){
+    plot = ggplot(data = network.dynamics.tmp, aes(x = time, y = value,color=variable)) + geom_point()
+    plot = plot+labs(colour="Nodes", y="Activation level", title=title)
+  }
+  if(!is.null(col)){
+    plot = ggplot(data = network.dynamics.tmp, aes(x = time, y = value,color=variable)) + geom_point() + scale_color_manual(values = col)
+    plot = plot+labs(colour="Nodes", y="Activation level", title=title)
+  }
+  return(plot)
 }
 
 network.dynamics.ODE <- function(net,state,mode='fuzzy.logic',h=50,gamma=1,time.limit=30,time.step.size=0.01,weights,perturbations=NULL,special_node_functions = list()) {

@@ -14,6 +14,67 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r setup}
-library(SimNetR)
+
+
+# SimNetR
+
+<!-- badges: start -->
+<!-- badges: end -->
+
+The goal of SimNetR is ...
+
+```{r out.width="100%",out.height="100%", fig.align = "center",dpi=1200, echo=F}
+#knitr::include_graphics("./man/figures/SimNetR_flowchart.jpg")
 ```
+
+
+## Installation
+
+You can install the development version of SimNetR from [GitHub](https://github.com/) with:
+
+``` r
+# install.packages("devtools")
+devtools::install_github("icrespocasajus/SimNetR")
+```
+
+## Example
+
+This is a basic example which shows you how ...
+
+```{r example,results=FALSE,message=FALSE}
+
+```
+
+
+
+
+
+## Authors
+
+Ana Rodriguez
+
+```{r , out.width="30%",echo=F}
+knitr::include_graphics("./man/figures/README-anarodriguez.png")
+```
+
+Ana Rodriguez Sanchez-Archidona, phD
+Chargé de recherche
+CHUV | Department of Oncology | George Coukos group
+Ludwig Institute for Cancer Research |  Lausanne Branch
+Rue du Bugnon 25A, CH-1005 Lausanne, 4th floor, Room 190
+Switzerland
+arsanchezarchidona@gmail.com
+
+
+Isaac Crespo
+
+```{r , out.width="30%",echo=F}
+knitr::include_graphics("./man/figures/README-isaaccrespo.jpg")
+```
+
+Isaac Crespo, phD  
+Senior Computational Scientist  
+CHUV | Department of Oncology | George Coukos group  
+Ludwig Institute for Cancer Research |  Lausanne Branch  
+AGORA, Bugnon 25A, 1005 Lausanne, 4th floor, Room 026  
+isaaccrespo@hotmail.com

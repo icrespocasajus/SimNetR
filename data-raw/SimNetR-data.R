@@ -1,0 +1,5 @@
+library(usethis)
+network = readRDS(file="./SimNetR_Network.Rds")
+phenotypes = readRDS(file="./SimNetR_Phenotypes.Rds")
+usethis::use_data(network, overwrite = TRUE)
+usethis::use_data(phenotypes, overwrite = TRUE)

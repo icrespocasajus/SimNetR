@@ -25,6 +25,8 @@ The formalism adopted by SimNetR originates from the method proposed in "A metho
 knitr::include_graphics("./man/figures/README-ode.png")
 ```
 
+
+
 The right-hand side of the differential equation consists of two components: an activation function and a decay term. Activation is modeled by a sigmoid function of ω, representing the total input to the node. The sigmoid function chosen ensures that it passes through the points (0,0) and (1,1) regardless of the value of its gain, h. By bounding the node's activation level to the closed interval [0,1], it can be interpreted as a normalized value, facilitating direct comparison between discrete (Boolean) and continuous dynamical systems. Subsequently, the second part of the equation represents a decay term, which is simply proportional to the node's activation level for simplicity.
 
 
@@ -120,7 +122,7 @@ for(initial.state.name in c(initial_state)){
 
 
 ## Plot the simulation
-```{r ,fig.height=6,echo=T, message=FALSE, warning=FALSE, results='hide'}
+```{r ,fig.height=5,echo=T, message=FALSE, warning=FALSE, results='hide'}
 # Assign colors to the nodes
 node.color = c(
   Modulon_1="#83DC92FF",
@@ -144,7 +146,7 @@ plot.tmp
 
 
 ### Plot the simulation as a trajectory heatmap
-```{r, warning=FALSE, message=FALSE, results='hide', echo=T}
+```{r,fig.width=8, warning=FALSE, message=FALSE, results='hide', echo=T}
 library(pheatmap)
 # Plotting trajectory
 trajectory.heatmap.input = as.data.frame(network.dynamics[[initial_state]])
@@ -163,7 +165,7 @@ trajectory.heatmap
 
 
 ### Plot the simulation as a trajectory heatmap: initial and final states
-```{r,fig.width=5, message=FALSE, warning=FALSE,echo=T}
+```{r,fig.width=8, message=FALSE, warning=FALSE,echo=T}
 final = as.data.frame(t(as.data.frame(network.dynamics[[initial_state]])))
 final = final[c(2:nrow(final)), ncol(final), drop=F]
 initial.vs.final = data.frame(Initial=initial.states[nodes,initial_state], Final=final[nodes,1])

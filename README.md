@@ -10,7 +10,7 @@ effects, with various intensities and modalities such as constant,
 temporal, and peaks.
 
 The formalism adopted by SimNetR originates from the method proposed in
-“A method for the generation of standardized qualitative dynamical
+“A method for the generation of standardized qualitative dynamical 
 systems of regulatory networks” published in Theoretical Biology and
 Medical Modelling (March, 2006). In the SimNetR framework, the state of
 a node is defined by the following equation:

@@ -1,0 +1,214 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
+
+
+# SimNetR
+
+SimNetR aims to simulate the dynamics of network-based continuous models defined by ordinary differential equations (ODEs). It allows for simulating node perturbations, including both positive and negative effects, with various intensities and modalities such as constant, temporal, and peaks.
+
+The formalism adopted by SimNetR originates from the method proposed in "A method for the generation of standardized qualitative dynamical systems of regulatory networks" published in Theoretical Biology and Medical Modelling (March, 2006). In the SimNetR framework, the state of a node is defined by the following equation:
+
+
+```{r out.width="50%",out.height="100%", fig.align = "center",dpi=1200, echo=F}
+knitr::include_graphics("./man/figures/README-ode.png")
+```
+
+The right-hand side of the differential equation consists of two components: an activation function and a decay term. Activation is modeled by a sigmoid function of ω, representing the total input to the node. The sigmoid function chosen ensures that it passes through the points (0,0) and (1,1) regardless of the value of its gain, h. By bounding the node's activation level to the closed interval [0,1], it can be interpreted as a normalized value, facilitating direct comparison between discrete (Boolean) and continuous dynamical systems. Subsequently, the second part of the equation represents a decay term, which is simply proportional to the node's activation level for simplicity.
+
+
+
+## Installation
+
+You can install the development version of SimNetR from [GitHub](https://github.com/) with:
+
+``` r
+# install.packages("devtools")
+devtools::install_github("icrespocasajus/SimNetR")
+```
+
+## Example
+
+This is a basic example which shows you how to run a simulation.
+
+### Load the package
+```{r,results=FALSE,message=FALSE}
+library(SimNetR)
+```
+
+### Load other required packages
+```{r,results=FALSE,message=FALSE}
+library(operators)
+library(ggplot2)
+library(reshape2)
+library(deSolve)
+library(pheatmap)
+```
+
+### Load the network
+```{r}
+net = network
+head(net[,c('Source','Interaction','Target','Weight'),drop=F])
+```
+
+### Load some known phenotypes
+```{r,results=T,message=FALSE}
+initial.states = phenotypes
+initial.states[,c("Centroid_NaiveLike","Centroid_Tpex","Centroid_Tex")]
+```
+
+### Set up the simulation parameters
+```{r, warning=FALSE, message=FALSE, results='hide', echo=T}
+mode = 'weights'
+time.step.size = 0.01
+time.limit = 30
+h = 10
+times = seq(0, time.limit, by=time.step.size)
+```
+
+
+
+### Define initial state
+```{r, warning=FALSE, message=FALSE, results=T, echo=T}
+initial_state = 'Centroid_Tpex'
+initial.states[initial_state]
+```
+
+
+### Define perturbation
+```{r, warning=FALSE, message=FALSE, results='hide', echo=T}
+perturbation = perturbNodes(nodes = c("TCR_Signal"), 
+                                at.times = c(10),
+                                duration = c(20),
+                                intensity = c(0.75),
+                                time.step.size = time.step.size,
+                                times)
+```
+
+
+### Run the simulation
+```{r, warning=FALSE, message=FALSE, results='hide', echo=T}
+initial_state = 'Centroid_Tpex'
+nodes = sort(unique(c(net[,1],net[,3])))
+
+network.dynamics = list()
+for(initial.state.name in c(initial_state)){
+  initial.state = as.numeric(initial.states[nodes, initial.state.name])
+  names(initial.state) = nodes
+  network.dynamics[[initial.state.name]] = network.dynamics.ODE(net=net,
+                                                                state=initial.state,
+                                                                mode=mode,
+                                                                weights=net$Weight,
+                                                                h=h,
+                                                                gamma=1,
+                                                                time.limit = time.limit,
+                                                                perturbations=perturbation)
+}
+```
+
+
+
+## Plot the simulation
+```{r ,fig.width=8,fig.height=6,echo=T, message=FALSE, warning=FALSE, results='hide'}
+# Assign colors to the nodes
+node.color = c(
+  Modulon_1="#83DC92FF",
+  Modulon_2= "#8881E0FF", 
+  Modulon_3= "#E0745EFF",
+  Modulon_4= "#8EE0D5FF",
+  Modulon_5= "#87807DFF",
+  Modulon_6= "#DACF93FF",
+  Modulon_7= "#88B1DEFF",
+  Modulon_8="#BB4EDFFF",
+  Modulon_9="#85E957FF",
+  Modulon_10="#DAD957FF",
+  Modulon_11="#DB7EBAFF",
+  Modulon_12="#E0D0D5FF",
+  TCR_Signal ="black", 
+  IL2_Signal ="grey")
+
+plot.tmp = plotPerturbation(dat=network.dynamics[[initial_state]],col=node.color,title = "Tpex under TCR perturbation")
+plot.tmp 
+```
+
+
+### Plot the simulation as a trajectory heatmap
+```{r,fig.width=10, warning=FALSE, message=FALSE, results='hide', echo=T}
+library(pheatmap)
+# Plotting trajectory
+trajectory.heatmap.input = as.data.frame(network.dynamics[[initial_state]])
+rownames(trajectory.heatmap.input) = paste0(trajectory.heatmap.input$time)
+trajectory.heatmap.input = as.data.frame(t(trajectory.heatmap.input[,-c(1)]))
+trajectory.heatmap = pheatmap::pheatmap(main = 'Network activity in time',
+                              trajectory.heatmap.input[names(node.color),],
+                              cluster_rows = F,
+                              cluster_cols = F,
+                              cellheight = 10,
+                              cellwidth = 0.1,
+                              show_rownames = T,
+                              show_colnames = F)
+trajectory.heatmap
+```
+
+
+### Plot the simulation as a trajectory heatmap: initial and final states
+```{r,fig.width=10, message=FALSE, warning=FALSE,echo=T}
+final = as.data.frame(t(as.data.frame(network.dynamics[[initial_state]])))
+final = final[c(2:nrow(final)), ncol(final), drop=F]
+initial.vs.final = data.frame(Initial=initial.states[nodes,initial_state], Final=final[nodes,1])
+rownames(initial.vs.final) = nodes
+
+initial.vs.final.heatmap = pheatmap::pheatmap(main = "Initial Vs. Final state",
+                                              as.matrix(initial.vs.final)[names(node.color),],
+                                              cluster_rows = F,
+                                              cluster_cols = F,
+                                              cellheight = 10,
+                                              display_numbers = T,
+                                              cellwidth = 20,
+                                              show_rownames = T,
+                                              show_colnames = F)
+
+initial.vs.final.heatmap
+```
+
+
+## Authors
+
+Ana Rodriguez
+
+```{r , out.width="10%",echo=F}
+knitr::include_graphics("./man/figures/README-anarodriguez.png")
+```
+
+Ana Rodriguez Sanchez-Archidona, phD  
+Chargé de recherche  
+CHUV | Department of Oncology | George Coukos group  
+Ludwig Institute for Cancer Research |  Lausanne Branch  
+Rue du Bugnon 25A, CH-1005 Lausanne, 4th floor, Room 190  
+Switzerland  
+arsanchezarchidona@gmail.com  
+
+
+Isaac Crespo
+
+```{r , out.width="10%",echo=F}
+knitr::include_graphics("./man/figures/README-isaaccrespo.jpg")
+```
+
+Isaac Crespo, phD  
+Senior Computational Scientist  
+CHUV | Department of Oncology | George Coukos group  
+Ludwig Institute for Cancer Research |  Lausanne Branch  
+AGORA, Bugnon 25A, 1005 Lausanne, 4th floor, Room 026  
+isaaccrespo@hotmail.com

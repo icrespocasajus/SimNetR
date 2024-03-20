@@ -21,7 +21,7 @@ SimNetR aims to simulate the dynamics of network-based continuous models defined
 The formalism adopted by SimNetR originates from the method proposed in "A method for the generation of standardized qualitative dynamical systems of regulatory networks" published in Theoretical Biology and Medical Modelling (March, 2006). In the SimNetR framework, the state of a node is defined by the following equation:
 
 
-```{r out.width="50%",out.height="100%", fig.align = "center",dpi=1200, echo=F}
+```{r out.width="75%",out.height="100%", fig.align = "center",dpi=1200, echo=F}
 knitr::include_graphics("./man/figures/README-ode.png")
 ```
 
@@ -120,7 +120,7 @@ for(initial.state.name in c(initial_state)){
 
 
 ## Plot the simulation
-```{r ,fig.width=8,fig.height=6,echo=T, message=FALSE, warning=FALSE, results='hide'}
+```{r ,fig.height=6,echo=T, message=FALSE, warning=FALSE, results='hide'}
 # Assign colors to the nodes
 node.color = c(
   Modulon_1="#83DC92FF",
@@ -144,7 +144,7 @@ plot.tmp
 
 
 ### Plot the simulation as a trajectory heatmap
-```{r,fig.width=10, warning=FALSE, message=FALSE, results='hide', echo=T}
+```{r, warning=FALSE, message=FALSE, results='hide', echo=T}
 library(pheatmap)
 # Plotting trajectory
 trajectory.heatmap.input = as.data.frame(network.dynamics[[initial_state]])
@@ -163,7 +163,7 @@ trajectory.heatmap
 
 
 ### Plot the simulation as a trajectory heatmap: initial and final states
-```{r,fig.width=10, message=FALSE, warning=FALSE,echo=T}
+```{r,fig.width=5, message=FALSE, warning=FALSE,echo=T}
 final = as.data.frame(t(as.data.frame(network.dynamics[[initial_state]])))
 final = final[c(2:nrow(final)), ncol(final), drop=F]
 initial.vs.final = data.frame(Initial=initial.states[nodes,initial_state], Final=final[nodes,1])

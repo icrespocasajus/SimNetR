@@ -15,7 +15,7 @@ systems of regulatory networks” published in Theoretical Biology and
 Medical Modelling (March, 2006). In the SimNetR framework, the state of
 a node is defined by the following equation:
 
-<img src="./man/figures/README-ode.png" width="50%" height="100%" style="display: block; margin: auto;" />
+<img src="./man/figures/README-ode.png" width="75%" height="100%" style="display: block; margin: auto;" />
 
 The right-hand side of the differential equation consists of two
 components: an activation function and a decay term. Activation is
